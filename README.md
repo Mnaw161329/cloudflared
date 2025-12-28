@@ -1,118 +1,117 @@
-Cloudflare Tunnel Setup Guide (macOS / Linux)
+##Cloudflare Tunnel တည်ဆောက်နည်း လမ်းညွှန် (macOS / Linux)
 
-This guide explains step-by-step how to set up a Cloudflare Tunnel on your local machine using the command line (terminal).
-It is primarily for macOS and Linux users.
+#ဒီလမ်းညွှန်မှာ Cloudflare Tunnel ကို command line (terminal) နဲ့ အဆင့်ဆင့် တည်ဆောက်ပုံကို ရှင်းပြထားပါတယ်။
+#အဓိက အားဖြင့် macOS နဲ့ Linux အသုံးပြုသူတွေအတွက် ဖြစ်ပါတယ်။
 
-1. Install cloudflared
+1. cloudflared ထည့်သွင်းပါ
 
-First, install the cloudflared CLI tool.
+cloudflared CLI tool ကို အရင်ထည့်ပါ။
 
-# macOS (using Homebrew)
+macOS 
+```
 brew install cloudflare/cloudflare/cloudflared
+```
 
-# Or manual install (example for macOS ARM64)
+သို့မဟုတ် လက်နဲ့ ထည့်သွင်းပါ (macOS ARM64 ဥပမာ)
+```
 wget https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-darwin-arm64
+```
+```
 chmod +x cloudflared-darwin-arm64
+```
+```
 sudo mv cloudflared-darwin-arm64 /usr/local/bin/cloudflared
+```
 
-# Linux users: download the correct binary from
-# https://github.com/cloudflare/cloudflared/releases
+Linux သုံးသူတွေ ကျေးဇူးပြု၍ အောက်ပါ link ကနေ သင့် OS နဲ့ ကိုက်ညီတဲ့ file ကို ဒေါင်းပါ
+https://github.com/cloudflare/cloudflared/releases
 
-Check the installation:
+ထည့်ပြီးစစ်ပါ။
+```
 cloudflared --version
+```
 
-2. Clone example configuration files (optional but recommended)
-
+2. နမူနာ config ဖိုင်တွေ ရယူပါ
+```
 git clone https://github.com/Mnaw161329/cloudflared.git
+```
 
-This repository contains useful example config files and templates.
+ဒီဖိုလ်ဒါထဲမှာ နမူနာ config တွေနဲ့ အသုံးဝင်တဲ့ ဖိုင်တွေ ပါပါတယ်။
 
-3. Move necessary files to ~/.cloudflared/
+3. လိုအပ်တဲ့ ဖိုင်တွေကို ~/.cloudflared/ ထဲ ရွှေ့ပါ
 
-# Create the directory if it doesn't exist
+ဖိုလ်ဒါ မရှိရင် ဖန်တီးပါ
+```
 mkdir -p ~/.cloudflared
+```
 
-# Copy files from the cloned repo (choose what you need)
+cloned folder ထဲက ဖိုင်တွေ ကူးပါ (လိုသလို ရွေးပါ)
+```
 cp cloudflared/* ~/.cloudflared/
+```
 
-4. Authenticate with Cloudflare (fix or renew cert.pem)
+4. cert.pem ပြင်ဆင်ခြင်း
+```
+nano ./cloudflared/cert.pem
+```
+```
+cp ./cloudflared/cert.pem ~/.cloudflared/
+```
 
-Run this command to log in to your Cloudflare account:
+အောင်မြင်ရင် ~/.cloudflared/ ထဲမှာ cert.pem ဖန်တီးပေးပါလိမ့်မယ်။
 
-cloudflared tunnel login
+5. Tunnel ဖန်တီးပါ
 
-A browser window will open. Log in with your Cloudflare account.
-This will generate or renew cert.pem in ~/.cloudflared/.
+နာမည်ပေးပြီး tunnel တစ်ခု ဖန်တီးပါ။
+cloudflared tunnel create သင့်-tunnel-နာမည်
 
-5. Create your tunnel
+ဥပမာ။
+```
+cloudflared tunnel create www(subdomain)
+```
 
-Give your tunnel a name and create it:
+အောင်မြင်ရင် Tunnel UUID နဲ့ credentials file တစ်ခု ဖန်တီးပေးပါလိမ့်မယ်။
+ဥပမာ။ ~/.cloudflared/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx.json
 
-cloudflared tunnel create your-tunnel-name
-
-Example:
-cloudflared tunnel create www.zawseng.site
-
-Success output will show a Tunnel UUID and create a credentials file like:
-~/.cloudflared/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx.json
-
-6. Create config file
-
-Create and edit your config file:
-
+6. Config file ဖန်တီးပါ
+```
 nano ~/Desktop/cloudflared/yourTunnel-config.yml
+```
 
-Copy the example from the cloned folder and modify it.
-Important parts:
-
-tunnel: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx   # Your tunnel UUID or name
-credentials-file: /Users/yourusername/.cloudflared/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx.json
+cloned folder ထဲက နမူနာကို ကူးပြီး ပြင်ဆင်ပါ။
+အရေးကြီးဆုံး အပိုင်း။
+```
+tunnel: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx   # သင့် tunnel UUID သို့မဟုတ် နာမည်
+credentials-file: /Users/သင့်အမည်/.cloudflared/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx.json
 
 ingress:
   - hostname: www.yourdomain.com
-    service: http://localhost:80               # Change to your local server port (e.g., 3000, 8080)
-  - hostname: yourdomain.com                   # Optional: for apex domain
+    service: http://localhost:80               # သင့် local server port နဲ့ ပြောင်းပါ (ဥပမာ 3000, 8080)
+  - hostname: yourdomain.com                   # apex domain လိုရင် ထည့်ပါ
     service: http://localhost:80
-  - service: http_status:404                   # REQUIRED: catch-all rule (must be last)
+  - service: http_status:404                   # အမြဲ နောက်ဆုံး ထားရမယ် (catch-all rule)
+```
+Save လုပ်ပါ။ (nano မှာ Ctrl+O → Enter → Ctrl+X)
 
-Save: Ctrl+O -> Enter -> Ctrl+X
-
-Validate config (recommended):
+Config မှန်မမှန် စစ်ပါ။
+```
 cloudflared tunnel --config ~/Desktop/cloudflared/yourTunnel-config.yml ingress validate
+```
 
-7. Add DNS routing
+7. DNS route ထည့်ပါ
 
-This automatically creates proxied CNAME records in your Cloudflare DNS:
+Cloudflare DNS ထဲမှာ အလိုအလျောက် CNAME record ဖန်တီးပေးပါတယ်။
+cloudflared tunnel route dns သင့်-tunnel-နာမည် subdomain.yourdomain.com
 
-cloudflared tunnel route dns your-tunnel-name www.yourdomain.com
-cloudflared tunnel route dns your-tunnel-name yourdomain.com
+ဥပမာ။
+```
+cloudflared tunnel route dns www(subdomain) subdomain.yourdomain.com
+```
 
-Example:
-cloudflared tunnel route dns www.zawseng.site www.zawseng.site
-cloudflared tunnel route dns www.zawseng.site zawseng.site
+8. Tunnel ကို ဖွင့်ပါ
+cloudflared tunnel --config ~/Desktop/cloudflared/yourTunnel-config.yml run သင့်-tunnel-နာမည်
 
-8. Run the tunnel
-
-Start the tunnel:
-
-cloudflared tunnel --config ~/Desktop/cloudflared/yourTunnel-config.yml run your-tunnel-name
-
-Example:
-cloudflared tunnel --config ~/Desktop/cloudflared/www-config.yml run www.zawseng.site
-
-Keep the terminal open. The tunnel will stay connected.
-To stop: press Ctrl + C
-
-Bonus: Run as a background service
-
-To run automatically in the background:
-
-cloudflared service install --config ~/Desktop/cloudflared/yourTunnel-config.yml
-
-(Note: starting the service may require additional steps depending on your OS.)
-
-After completing these steps, your local server will be securely accessible worldwide via https://www.yourdomain.com through Cloudflare.
-
-For debugging, add --loglevel debug to the run command.
-
-Good luck!
+ဥပမာ။
+```
+cloudflared tunnel --config ~/Desktop/cloudflared/www-config.yml run www
+```
