@@ -1,7 +1,7 @@
-##Cloudflare Tunnel တည်ဆောက်နည်း လမ်းညွှန် (macOS / Linux)
+##Cloudflare Tunnel တည်ဆောက်နည်း လမ်းညွှန် (macOS / Linux)##
 
-#ဒီလမ်းညွှန်မှာ Cloudflare Tunnel ကို command line (terminal) နဲ့ အဆင့်ဆင့် တည်ဆောက်ပုံကို ရှင်းပြထားပါတယ်။
-#အဓိက အားဖြင့် macOS နဲ့ Linux အသုံးပြုသူတွေအတွက် ဖြစ်ပါတယ်။
+#ဒီလမ်းညွှန်မှာ Cloudflare Tunnel ကို command line (terminal) နဲ့ အဆင့်ဆင့် တည်ဆောက်ပုံကို ရှင်းပြထားပါတယ်။#
+#အဓိက အားဖြင့် macOS နဲ့ Linux အသုံးပြုသူတွေအတွက် ဖြစ်ပါတယ်။#
 
 1. cloudflared ထည့်သွင်းပါ
 
