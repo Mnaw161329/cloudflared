@@ -1,0 +1,8 @@
+tunnel: tunnelID
+credentials-file: ~/.cloudflared/tunnelID.json
+
+ingress:
+  - hostname: subdomain.example.com
+    service: http://localhost:port
+  - service: http_status:404
+  
